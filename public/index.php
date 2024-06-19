@@ -1,8 +1,17 @@
 <?php
 
+use MiladRahimi\PhpRouter\Router;
 
-const DS = DIRECTORY_SEPARATOR;
-define('PATH_ROOT', dirname(__DIR__) . DS);
+require 'vendor/autoload.php';
 
-require_once PATH_ROOT . 'vendor/autoload.php';
+define('VIEWS', dirname(__DIR__). DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR);
+define('SCRIPTS', dirname($_SERVER['SCRIPT_NAME']) . DIRECTORY_SEPARATOR);
+
+$router = new Router($_GET['url']);
+
+$router->get('/',  'App\Controller\PageController::index');
+$router->get('/page/{id}',  'App\Controller\PageController::show');
+
+$router->run();
+
 
