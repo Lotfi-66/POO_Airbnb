@@ -2,8 +2,8 @@
 
 namespace App\Repository;
 
-use App\Model\Order;
 use App\AppRepoManager;
+use App\Model\Order;
 use Core\Repository\Repository;
 
 class OrderRepository extends Repository
@@ -14,15 +14,16 @@ class OrderRepository extends Repository
     }
 
     /**
-     * méthode qui recupere la derniere commande
+     * méthode qui permet de récupérer la dernière commande
      * @return ?int
      */
-    public function findLastOrder(): ?int
+    public function findLastOrder(): ?int 
     {
         $q = sprintf(
-            "SELECT * 
-            FROM `%s`
-            ORDER BY id DESC LIMIT 1",
+            'SELECT * 
+            FROM `%s` 
+            ORDER BY id DESC 
+            LIMIT 1',
             $this->getTableName()
         );
 
@@ -43,33 +44,35 @@ class OrderRepository extends Repository
      */
     public function findLastStatusByUser(int $user_id, string $status): bool
     {
+        //on crée la requete SQL
         $q = sprintf(
             'SELECT * 
             FROM `%s` 
             WHERE `user_id` = :user_id 
-            AND status = :status 
-            ORDER BY id DESC  
+            AND `status` = :status 
+            ORDER BY id DESC 
             LIMIT 1',
             $this->getTableName()
         );
-        //on prepare la requete
+
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
-        //on verifie la requete
-        if (!$stmt->execute(['user_id' => $user_id, 'status' => $status])) return false;
+        //on vérifie que la requete est bien executée
+        if(!$stmt->execute(['user_id' => $user_id, 'status' => $status])) return false;
 
         //on récupère les résultats
         $result = $stmt->fetchObject();
 
         //si pas de resultat on retourne false
-        if (!$result) return false;
+        if(!$result) return false;
 
-        //si on a des resultats, on vérifie si la commande contient des lignes
+        //si on a des résultats, on vérifie si la commande contient des lignes
         $count_row = $this->countOrderRow($result->id);
-        //si on a pas de resultats on retourne false
-        if (!$count_row) return false;
-        //sinon on retourne true
-        return true;
+        //si on a pas de résultat on renvoi false
+        if(!$count_row) return false;
 
+        //si on a des résultats on renvoi true
+        return true;
     }
 
     /**
@@ -81,30 +84,29 @@ class OrderRepository extends Repository
     {
         //query qui additionne le nombre de ligne de commande
         $q = sprintf(
-            'SELECT SUM(quantity) AS count
-            FROM `%s`
+            'SELECT SUM(quantity) as count
+            FROM `%s` 
             WHERE `order_id` = :order_id',
             AppRepoManager::getRm()->getOrderRowRepository()->getTableName()
         );
 
-        //on prepare la requete
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
 
-        //on verifie la requete
-        if (!$stmt->execute(['order_id' => $order_id])) return 0;
+        //on vérifie que la requete est bien executée
+        if(!$stmt->execute(['order_id' => $order_id])) return 0;
 
-        //on recupère le resultat
+        //on récupère le résultat
         $result = $stmt->fetchObject();
-
         //si pas de résultat on retourne 0 sinon le nombre de ligne
-        if ((!$result) || is_null($result)) return 0;
+        if(!$result || is_null($result)) return 0;
         return $result->count;
     }
 
     /**
-     * méthode qui permet de créer une nouvelle commande
+     * méthode qui permet de créer une commande
      * @param array $data
-     * @return ?int
+     * @return ?int 
      */
     public function insertOrder(array $data): ?int
     {
@@ -114,17 +116,19 @@ class OrderRepository extends Repository
             VALUES (:order_number, :date_order, :status, :user_id)',
             $this->getTableName()
         );
-        //on prepare la requete
+
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
-        //on execute la requete
+
         //si la requete n'est pas executée on retourne null
-        if (!$stmt->execute($data)) return null;
+        if(!$stmt->execute($data)) return null;
+
         //on retourne l'id de la commande
         return $this->pdo->lastInsertId();
     }
 
     /**
-     * méthode qui retourne l'id de la commande si status = IN_CART
+     * méthode qui retourne l'id de la commande si status = IN_CART pour un utilisateur
      * @param int $user_id
      * @return ?int
      */
@@ -132,32 +136,31 @@ class OrderRepository extends Repository
     {
         $status = Order::IN_CART;
 
-        //on crée la requete SQL
+        //on cree la requete SQL
         $q = sprintf(
             'SELECT * 
             FROM `%s` 
             WHERE `user_id` = :user_id 
-            AND status = :status 
-            ORDER BY id DESC  
+            AND `status` = :status 
+            ORDER BY id DESC 
             LIMIT 1',
             $this->getTableName()
         );
 
-        //on prepare la requete
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
 
         //on vérifie que la requete est bien executée
-        if (!$stmt->execute(['user_id' => $user_id, 'status' => $status])) return null;
+        if(!$stmt->execute(['user_id' => $user_id, 'status' => $status])) return null;
 
-        //on recupère le resultat
+        //on récupère les résultats
         $result = $stmt->fetchObject();
 
-        //si on a pas de resultat on retourne null
-        if (!$result) return null;
+        //si on n'a pas de résultat on retourne null
+        if(!$result) return null;
 
-        //sinon on retourne l'id de la commande
+        //on retourne l'id de la commande
         return $result->id;
-        
     }
 
     /**
@@ -171,22 +174,50 @@ class OrderRepository extends Repository
         $q = sprintf(
             'SELECT * 
             FROM `%s` 
-            WHERE `user_id` = :user_id 
+            WHERE user_id = :user_id 
             AND status = :status',
             $this->getTableName()
         );
-        //on prepare la requete
+
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
+
         //on execute la requete
-        if (!$stmt->execute(['user_id' => $user_id, 'status' => Order::IN_CART])) return null;
+        if(!$stmt->execute(['user_id' => $user_id, 'status' => Order::IN_CART])) return null;
+
         //on recupère le resultat
         $result = $stmt->fetchObject();
-        //si on a pas de resultat on retourne null
-        if (!$result) return null;
-        //on doit hydrater notre objet Order avec toutes ses lignes de commandes 
-        $result -> order_rows = AppRepoManager::getRm()->getOrderRowRepository()->findOrderRowByOrderId($result->id);
-        //on retourne le resultat
+
+        //si pas de résultat on retourne null
+        if(!$result) return null;
+
+        //on doit hydrater notre objet Order avec toutes ses lignes de commandes associées
+        $result->order_rows = AppRepoManager::getRm()->getOrderRowRepository()->findOrderRowByOrder($result->id);
+
         return $result;
+    }
+
+    /**
+     * méthode qui permet de supprimer une commande
+     * @param int $id
+     * @return bool
+     */
+    public function deleteOrder(int $id): bool
+    {
+        //on cree la requete SQL
+        $q = sprintf(
+            'DELETE FROM `%s` 
+            WHERE `id` = :id',
+            $this->getTableName()
+        );
+
+        //on prepare la requete
+        $stmt = $this->pdo->prepare($q);
+
+        //on verifie que la requete est bien préparée
+        if (!$stmt) return false;
+
+        return $stmt->execute(['id' => $id]);
     }
 
 }

@@ -48,30 +48,31 @@ class PizzaRepository extends Repository
   }
 
   /**
-   * méthode qui permet de récuperer une pizza grace a son id
-   * @param int $id
+   * méthode qui permet de récupérer une pizza grace à son id
+   * @param int $pizza_id
    * @return ?Pizza
    */
   public function getPizzaById(int $pizza_id): ?Pizza
   {
-    //on crée la requête SQL
+    //on crée la requete SQL
     $q = sprintf(
       'SELECT * FROM %s WHERE `id` = :id',
-      $this -> getTableName()
+      $this->getTableName()
     );
 
     //on prépare la requete
     $stmt = $this->pdo->prepare($q);
 
-    //on vérifie que la requete est bien préparer 
+    //on vérifie que la requete est bien préparée
     if(!$stmt) return null;
-    //si tout est bon on bind les valeurs
+
+    //on execute la requete en passant les paramètres
     $stmt->execute(['id' => $pizza_id]);
 
     //on récupère le résultat
     $result = $stmt->fetch();
 
-    //si je n'ai pas de resultat, on retourne null
+    //si je n'ai pas de résultat, je retourne null
     if(!$result) return null;
 
     //si j'ai un résultat, j'instancie un objet Pizza
@@ -81,8 +82,7 @@ class PizzaRepository extends Repository
     $pizza->ingredients = AppRepoManager::getRm()->getPizzaIngredientRepository()->getIngredientByPizzaId($pizza_id);
     //on va hydrater les prix de la pizza
     $pizza->prices = AppRepoManager::getRm()->getPriceRepository()->getPriceByPizzaId($pizza_id);
-
-    //je retourne la pizza
+    //je retourne l'objet Pizza
     return $pizza;
   }
 

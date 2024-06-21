@@ -14,28 +14,26 @@ class PriceRepository extends Repository
         return 'price';
     }
 
-
     /**
-     * méthode qui permet de récuperer tout les prix et la taille d'une pizza grace a son id
+     * méthode qui permet de récupérer tous les prix d'une pizza grace à son id avec sa taille associée
      * @param int $pizza_id
      * @return array
      */
-    public function getPriceByPizzaId(int $pizza_id): array
+    public function getPriceByPizzaId(int $pizza_id):array 
     {
         //on déclare un tableau vide
         $array_result = [];
-        //on crée la requete sql
+        //on crée la requete SQL
         $q = sprintf(
             'SELECT p.*, s.`label` 
-            FROM %1$s AS p
-            INNER JOIN %2$s AS s 
-            ON p.`size_id` = s.`id`
+            FROM %1$s AS p 
+            INNER JOIN %2$s AS s ON p.`size_id` = s.`id`
             WHERE p.`pizza_id` = :id',
             $this->getTableName(), //correspond au %1$s
             AppRepoManager::getRm()->getSizeRepository()->getTableName() //correspond au %2$s
         );
 
-        //on prépare la requete 
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
 
         //on vérifie que la requete est bien executée
@@ -44,45 +42,45 @@ class PriceRepository extends Repository
         //on execute la requete en passant l'id de la pizza
         $stmt->execute(['id' => $pizza_id]);
 
-        //on récupere les resultats
+        //on récupère les résultats
         while ($row_data = $stmt->fetch()) {
-            // a chaque passage de la boucle on instancie un objet pizza
+            //a chaque passage de la boucle on instancie un objet ingredient
             $price = new Price($row_data);
 
-            //on va reconstruire a la main un tableau pour crée une instance de size
+            //on va reconstruire à la main un tableau pour crée une instance de Size
             $size_data = [
                 'id' => $row_data['size_id'],
                 'label' => $row_data['label']
             ];
 
+            //on peut maintenant instancier un objet Size
             $size = new Size($size_data);
 
             //on va hydrater Price avec Size
             $price->size = $size;
 
-            //on rempli le tableau avec notre objet pizza
+            //on rempli le tableau avec l'objet Price
             $array_result[] = $price;
         }
 
         //on retourne le tableau fraichement rempli
         return $array_result;
     }
-
     /**
-     * méthode qui permet de récuperer le prix et la taille d'une pizza grace a son id
-     * @param int pizza_id
-     * @return ?float
+     * méthode qui permet de récupérer le prix d'une pizza grace à son id avec sa taille associée
+     * @param int $pizza_id
+     * @param int $size_id
+     * @return ?object
      */
-    public function getPriceByPizzaIdBySize(int $pizza_id, int $size_id): float
+    public function getPriceByPizzaIdBySize(int $pizza_id, int $size_id):?float
     {
-
-        //on crée la requete sql
+        
+        //on crée la requete SQL
         $q = sprintf(
             'SELECT p.*, s.`label` 
-            FROM %1$s AS p
-            INNER JOIN %2$s AS s 
-            ON p.`size_id` = s.`id`
-            WHERE p.`pizza_id` = :id
+            FROM %1$s AS p 
+            INNER JOIN %2$s AS s ON p.`size_id` = s.`id`
+            WHERE p.`pizza_id` = :id 
             AND p.`size_id` = :size_id',
             $this->getTableName(), //correspond au %1$s
             AppRepoManager::getRm()->getSizeRepository()->getTableName() //correspond au %2$s
@@ -91,12 +89,19 @@ class PriceRepository extends Repository
         //on prépare la requete
         $stmt = $this->pdo->prepare($q);
 
+        //on vérifie que la requete est bien executée
+        if (!$stmt) return null;
+
         //on execute la requete en passant l'id de la pizza
         $stmt->execute(['id' => $pizza_id, 'size_id' => $size_id]);
 
+        //on récupère le résultat
         $result = $stmt->fetchObject();
-        if (!$result) return null;
 
+        //on vérifie si on a un résultat
+        if(!$result) return null;
+
+        //on retourne le prix
         return $result->price;
     }
 }

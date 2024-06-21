@@ -2,9 +2,9 @@
 
 namespace App\Repository;
 
-use App\Model\Pizza;
 use App\AppRepoManager;
 use App\Model\OrderRow;
+use App\Model\Pizza;
 use Core\Repository\Repository;
 
 class OrderRowRepository extends Repository
@@ -27,74 +27,74 @@ class OrderRowRepository extends Repository
             VALUES (:order_id, :pizza_id, :quantity, :price, :size_id)',
             $this->getTableName()
         );
-        //on prepare la requete
-        $stmt = $this->pdo->prepare($q);
-        //on execute la requete
-        //si la requete n'est pas executée on retourne false
-        if (!$stmt->execute($data)) return false;
-        //on retourne true
-        return true;
 
+        $stmt = $this->pdo->prepare($q);
+
+        if (!$stmt->execute($data)) return false;
+
+        return true;
     }
 
     /**
-     * méthode qui récupère les lignes de commande lié a une commande
+     * méthode qui récupère les lignes de commande lié à une commande
      * @param int $order_id
      * @return array
      */
-    public function findOrderRowByOrderId(int $order_id): ?array
+    public function findOrderRowByOrder(int $order_id): ?array
     {
         //on déclare un tableau vide
         $array_result = [];
 
-        //on crée notre requete SQL
+        //on crée la requete SQL
         $q = sprintf(
             'SELECT * 
             FROM `%s` 
             WHERE `order_id` = :order_id',
             $this->getTableName()
         );
-        //on prepare la requete
+
+        //on prépare la requete
         $stmt = $this->pdo->prepare($q);
-        //on execute la requete
-        //si la requete n'est pas executée on retourne un tableau vide
+
+        //on vérifie que la requete est bien executée
         if (!$stmt->execute(['order_id' => $order_id])) return null;
-        //on retourne le resultat
-        while($result = $stmt->fetch()){
+
+        //on récupère les résultats dans une boucle
+        while ($result = $stmt->fetch()) {
             $orderRow = new OrderRow($result);
             //on va hydrater OrderRow pour avoir les infos de la pizza
             $orderRow->pizza = AppRepoManager::getRm()->getPizzaRepository()->readById(Pizza::class, $orderRow->pizza_id);
+
+            //on ajoute l'objet OrderRow dans le tableau
             $array_result[] = $orderRow;
         }
         return $array_result;
     }
 
     /**
-     * méthode qui calcule le montant total d'une commande
+     * méthode qui calcul le montant total d'une commande
      * @param int $order_id
-     * @return float
+     * @return ?float
      */
-
     public function findTotalPriceByOrder(int $order_id): ?float
     {
-        //les backtit pour les noms de collones
-        //on cree la requete sql
+        //on cree la requete SQL
         $q = sprintf(
-          'SELECT SUM(`price`) AS total_price
-          FROM `%s`
-          WHERE `order_id` = :order_id',
-          $this->getTableName()
+            'SELECT SUM(`price`) AS total_price 
+            FROM `%s` 
+            WHERE `order_id` = :order_id',
+            $this->getTableName()
         );
 
         //on prepare la requete
         $stmt = $this->pdo->prepare($q);
 
-        //on execute la requete
-        //si la requete n'est pas executée on retourne null
+        //on verifie que la requete est bien executée
         if (!$stmt->execute(['order_id' => $order_id])) return null;
-        //on retourne le resultat
+
+        //on recupere le resultat
         $result = $stmt->fetchObject();
-        //on retourne le total
+
         return $result->total_price ?? 0;
     }
 
@@ -105,10 +105,10 @@ class OrderRowRepository extends Repository
      */
     public function countOrderRow(int $order_id): ?int
     {
-        //query qui additionne le nombre de ligne de commande
+        //on cree la requete SQL
         $q = sprintf(
-            'SELECT SUM(quantity) AS count
-            FROM `%s`
+            'SELECT SUM(`quantity`) AS count 
+            FROM `%s` 
             WHERE `order_id` = :order_id',
             $this->getTableName()
         );
@@ -116,44 +116,95 @@ class OrderRowRepository extends Repository
         //on prepare la requete
         $stmt = $this->pdo->prepare($q);
 
-        //on verifie la requete
+        //on verifie que la requete est bien executée
         if (!$stmt->execute(['order_id' => $order_id])) return 0;
 
-        //on recupère le resultat
+        //on recupere le resultat
         $result = $stmt->fetchObject();
 
         return $result->count ?? 0;
     }
 
     /**
-     * méthode qui permet de mettre a jour une ligne de commande
+     * méthode qui permet de mettre à jour une ligne de commande
      * @param array $data
      * @return bool
      */
-    public function updateOrderRow(array $data): bool
+    public function updateOrderRow(array $data):bool
     {
-        //on doit recuperer le prix de la pizza
+        //on doit récupérer le prix de la pizza
         $pizza_price = AppRepoManager::getRm()->getPriceRepository()->getPriceByPizzaIdBySize($data['pizza_id'], $data['size_id']);
-        //on va calculer le prix total avec la nouvelle quantité
+        //on va recalculer le prix total avec la nouvelle quantité
         $price = $pizza_price * $data['quantity'];
-        //on crée notre requete SQL
+
+        //on cree la requete SQL
         $q = sprintf(
             'UPDATE `%s` 
-            SET `price` = :price, `quantity` = :quantity
+            SET `quantity` = :quantity, `price`= :price 
+            WHERE id = :id',
+            $this->getTableName()
+        );
+
+        //on prepare la requete
+        $stmt = $this->pdo->prepare($q);
+
+        //on verifie que la requete est bien préparée
+        if(!$stmt) return false;
+
+        return $stmt->execute([
+            'id' => $data['id'],
+            'quantity' => $data['quantity'],
+            'price' => $price
+        ]);
+    }
+
+    /**
+     * méthode qui permet de supprimer une ligne de commande
+     * @param int $id
+     * @return bool
+     */
+    public function deleteOrderRow(int $id):bool 
+    {
+        //on cree la requete SQL
+        $q= sprintf(
+            'DELETE FROM `%s` 
             WHERE `id` = :id',
             $this->getTableName()
         );
+
         //on prepare la requete
         $stmt = $this->pdo->prepare($q);
-        //on execute la requete
-        //si la requete n'est pas executée on retourne false
-        if (!$stmt->execute($data)) return false;
-        //on retourne true
-        return $stmt->execute([
-            'price' => $price,
-            'quantity' => $data['quantity'],
-            'id' => $data['id']
-        ]);
 
+        //on verifie que la requete est bien préparée
+        if(!$stmt) return false;
+
+        return $stmt->execute(['id' => $id]);
+    }
+
+    /**
+     * méthode qui recupère le nombre ligne de commande d'une commande
+     * @param int $order_id
+     * @return int
+     */
+    public function countOrderRowByOrder(int $order_id):int
+    {
+        //on cree la requete SQL
+        $q = sprintf(
+            'SELECT COUNT(*) AS count 
+            FROM `%s` 
+            WHERE `order_id` = :order_id',
+            $this->getTableName()
+        );
+
+        //on prepare la requete
+        $stmt = $this->pdo->prepare($q);
+
+        //on verifie que la requete est bien executée
+        if(!$stmt->execute(['order_id' => $order_id])) return 0;
+
+        //on recupere le resultat
+        $result = $stmt->fetchObject();
+
+        return $result->count;
     }
 }

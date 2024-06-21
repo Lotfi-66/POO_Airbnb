@@ -2,11 +2,10 @@
 
 namespace Core\Database;
 
-
-interface DatabaseConfigInterface
+interface DatabaseConfigInterface 
 {
-    public function getHost():string;
-    public function getName():string;
-    public function getUser():string;
-    public function getPass():string;
+  public function getHost(): string;
+  public function getName(): string;
+  public function getUser(): string;
+  public function getPass(): string;
 }

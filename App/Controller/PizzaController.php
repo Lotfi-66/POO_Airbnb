@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
-use Core\View\View;
 use App\AppRepoManager;
-use Core\Session\Session;
 use Core\Controller\Controller;
+use Core\Session\Session;
+use Core\View\View;
 
 class PizzaController extends Controller
 {
@@ -26,7 +26,7 @@ class PizzaController extends Controller
    * méthode qui renvoie la vue de la liste des pizzas
    * @return void
    */
-  public function getPizzas()
+  public function getPizzas():void
   {
     //le controlleur doit récupérer le tableau de pizzas pour le donnée à la vue
     $view_data = [
@@ -39,21 +39,22 @@ class PizzaController extends Controller
   }
 
   /**
-  * méthode qui renvoi la vue d'une pizza
-  * @param int $id
-  * @return void
-  */
-  public function getPizzaById(int $id):void 
+   * méthode qui renvoie la vue d'une pizza grace à son id
+   * @param int $id
+   * @return void
+   */
+  public function getPizzaById(int $id):void
   {
-    
+
     $view_data = [
-      'pizza' => AppRepoManager::getRm() ->getPizzaRepository() -> getPizzaById($id),
+      'pizza' => AppRepoManager::getRm()->getPizzaRepository()->getPizzaById($id),
       'form_result' => Session::get(Session::FORM_RESULT),
       'form_success' => Session::get(Session::FORM_SUCCESS),
-  ];
+    ];
 
 
     $view = new View('home/pizza_detail');
     $view->render($view_data);
   }
+
 }

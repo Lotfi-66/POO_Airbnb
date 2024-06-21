@@ -1,13 +1,16 @@
 <?php 
 
-namespace App\Controller;
-use MiladRahimi\PhpRouter\View\View;
+namespace Core\Controller;
 
+use App\App;
+use Laminas\Diactoros\Response\RedirectResponse;
 
-class Controller
+class Controller  implements ControllerInterface
 {
-    public function view(string $view, array $params = null)
-    {
-        $view = new View($view, $params);
-    }
+  public static function redirect(string $uri, int $status = 302, array $headers = []):void
+  {
+    $response = new RedirectResponse($uri, $status, $headers);
+    App::getApp()->getRouter()->getPublisher()->publish($response);
+    die();
+  }
 }

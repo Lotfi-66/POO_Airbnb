@@ -1,4 +1,4 @@
-name: airbnb-php
+name: ern24-airbnb
 recipe: lamp
 config:
   php: '8.2'

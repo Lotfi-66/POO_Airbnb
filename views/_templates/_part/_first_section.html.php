@@ -9,6 +9,6 @@
           Chez Papa Pizza, nous créons des pizzas exeptionnelles <br>
           avec un savoir-faire artisanal unique.
         </p>
-        <a class="call-action" href="/pizzas">Je commande</a>
+        <a class="call-action" href="/pizzas">Je découvre la carte</a>
       </div>
     </section>

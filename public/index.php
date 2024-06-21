@@ -1,17 +1,10 @@
 <?php
 
-use MiladRahimi\PhpRouter\Router;
+use App\App;
 
-require 'vendor/autoload.php';
+const DS = DIRECTORY_SEPARATOR;
+define('PATH_ROOT', dirname(__DIR__) . DS);
 
-define('VIEWS', dirname(__DIR__). DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR);
-define('SCRIPTS', dirname($_SERVER['SCRIPT_NAME']) . DIRECTORY_SEPARATOR);
+require_once PATH_ROOT . 'vendor/autoload.php';
 
-$router = new Router($_GET['url']);
-
-$router->get('/',  'App\Controller\PageController::index');
-$router->get('/page/{id}',  'App\Controller\PageController::show');
-
-$router->run();
-
-
+App::getApp()->start();
