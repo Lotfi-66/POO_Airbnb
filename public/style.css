@@ -1,0 +1,178 @@
+/* reset css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  padding: 10px;
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+ul,
+ol,
+li {
+  list-style: none;
+}
+
+/* fin de reset css */
+
+.login-box {
+  width: 500px;
+  background-color: rgb(243, 243, 243);
+  margin: 0 auto;
+  text-align: center;
+  padding: 50px 50px 0px;
+  border: solid 2px rgb(240, 240, 240);
+  border-radius: 50px;
+}
+
+.button {
+  background-color: rgb(214, 19, 78);
+  padding: 10px 20px;
+  color: white;
+  border-radius: 15px;
+  border: rgb(214, 19, 78) solid 5px;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+  transition: 0.6s;
+}
+
+.button:hover {
+  background-color: rgb(255, 255, 255);
+  border: solid 5px rgb(214, 19, 78);
+  color: rgb(214, 19, 78);
+}
+
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+#select,
+textarea,
+#card,
+input[type="search"] {
+  border: 2px solid rgb(214, 19, 78);
+  border-radius: 14px;
+  height: 60px;
+}
+
+.spanColor {
+  color: rgb(214, 19, 78);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+/* BTN NAV choix du compte */
+
+.relative {
+  height: 30px;
+  position: relative;
+  cursor: pointer;
+  margin-right: 20px;
+}
+
+#switchBtn {
+  height: 30px;
+  width: 120px;
+  border-radius: 50px;
+  border: none;
+  background: white;
+  box-shadow: 0 0 15px #0000001e;
+  transition: background 0.4s;
+}
+
+#switchBtn.active {
+  background: rgb(214, 19, 78);
+}
+
+#slider {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgb(214, 19, 78);
+  transition: left 0.4s;
+}
+
+#slider.active {
+  background: white;
+  left: 80%;
+}
+
+#choice {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  transform: translateY(-50%);
+
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: rgb(214, 19, 78);
+  font-weight: bold;
+  transition: left 0.4s;
+  font-size: 0.8rem;
+}
+
+#choice.active {
+  color: white;
+  left: 20%;
+}
+
+#nav2 {
+  display: none;
+}
+
+#nav2.active {
+  display: block;
+}
+
+#nav1.active {
+  display: none;
+}
+
+#nav1 {
+  display: block;
+}
+
+/* Hearth btn  */
+
+
+
+/* RESPONSIV FORM */
+
+@media screen and (max-width: 1000px) {
+
+  #responsive-form{
+  
+    flex-direction: column!important;
+
+  }
+  .custom-nav-profil {
+
+    flex-direction: column!important;
+
+  }
+  .nav-responsive{
+
+    flex-direction: column!important;
+ 
+  }
+
+  
+}
+
+@media screen and (max-width:800px) {
+
+.fav-home {
+  display: none;
+}
+
+  
+}

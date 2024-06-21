@@ -2,22 +2,19 @@
 
 namespace App;
 
-use App\Controller\AuthController;
-use App\Controller\OrderController;
-use App\Controller\PizzaController;
-use App\Controller\UserController;
-use Core\Database\DatabaseConfigInterface;
-use MiladRahimi\PhpRouter\Exceptions\InvalidCallableException;
-use MiladRahimi\PhpRouter\Exceptions\RouteNotFoundException;
 use MiladRahimi\PhpRouter\Router;
+use App\Controller\AuthController;
+use App\Controller\HomeController;
+use App\Controller\UserController;
+use App\Controller\LogementController;
+use Core\Database\DatabaseConfigInterface;
+use MiladRahimi\PhpRouter\Exceptions\RouteNotFoundException;
+use MiladRahimi\PhpRouter\Exceptions\InvalidCallableException;
 
 class App implements DatabaseConfigInterface
 {
-  //on définit des constantes
-  private const DB_HOST = "database";
-  private const DB_NAME = "database_lamp";
-  private const DB_USER = "admin";
-  private const DB_PASS = "admin";
+  //on définit des constantes de la base de données
+
 
   private static ?self $instance = null;
   //on crée une méthode public appelé au demarrage de l'appli dans index.php
@@ -58,28 +55,42 @@ class App implements DatabaseConfigInterface
   //2. méthode qui enregistre les routes
   private function registerRoutes(): void
   {
-    //on va définir des patterns pour les routes
-    $this->router->pattern('id', '[0-9]\d*'); //n'autorise que les chiffres
-
-
-
     // PARTIE AUTH:
     // connexion
     $this->router->get('/connexion', [AuthController::class, 'loginForm']);
     $this->router->post('/login', [AuthController::class, 'login']);
     $this->router->get('/inscription', [AuthController::class, 'registerForm']);
+    $this->router->get('/logout', [AuthController::class, 'logout']);
     $this->router->post('/register', [AuthController::class, 'register']);
+    $this->router->get('/profile/{id}', [AuthController::class, 'getProfileById']);
+   
 
-    // PARTIE PIZZA:
-    $this->router->get('/', [PizzaController::class, 'home'] );
-    $this->router->get('/pizzas', [PizzaController::class, 'getPizzas'] );
-    $this->router->get('/pizza/{id}', [PizzaController::class, 'getPizzaById'] );
-    
-    //PARTIE PANIER
-    $this->router->post('/add/order', [OrderController::class, 'addOrder']);
-    $this->router->get('/order/{id}', [UserController::class, 'order'] );
-    $this->router->post('/order/update/{id}', [OrderController::class, 'updateOrder']);
-    $this->router->post('/order-row/delete/{id}', [OrderController::class, 'deleteOrderRow']);
+
+
+    // PARTIE HOME:
+    $this->router->get('/', [HomeController::class, 'home']);
+    $this->router->get('/favoris', [UserController::class, 'favoris']);
+    $this->router->get('/mesBiens/{id}', [LogementController::class, 'mesBiens']);
+    $this->router->get('/details{id}', [LogementController::class, 'details']);
+    $this->router->get('/add_logement', [LogementController::class, 'addLogement']); 
+    $this->router->get('/home_price', [LogementController::class, 'logementByprice']);
+    $this->router->get('/home_type', [LogementController::class, 'logementByType']);
+
+
+    //add logement
+    $this->router->post('/add_logement_form', [UserController::class, 'addLogement']);
+    $this->router->get('/delete/{id}', [LogementController::class, 'deleteLogement']);
+  
+
+
+    // Reservation 
+
+    $this->router->post('/', [UserController::class, 'addReservation']);
+    $this->router->get('/delete/reservation/{id}', [LogementController::class, 'deleteReservation']);
+    $this->router->get('/mes_reservation/{id}', [UserController::class, 'getReservation']);
+    $this->router->get('/les-reservations/{id}', [LogementController::class, 'reservationMesLogements']);
+
+   
   }
 
   //3. méthode qui démarre le router
@@ -96,21 +107,21 @@ class App implements DatabaseConfigInterface
 
   public function getHost(): string
   {
-    return self::DB_HOST;
+    return DB_HOST;
   }
 
   public function getName(): string
   {
-    return self::DB_NAME;
+    return DB_NAME;
   }
 
   public function getUser(): string
   {
-    return self::DB_USER;
+    return DB_USER;
   }
 
   public function getPass(): string
   {
-    return self::DB_PASS;
+    return DB_PASS;
   }
 }

@@ -8,13 +8,12 @@ class User extends Model
 {
   public string $email;
   public string $password;
-  public string $firstname;
   public string $lastname;
-  public string $phone;
-  public ?string $address;
-  public ?string $zip_code;
-  public ?string $city;
-  public ?string $country;
-  public bool $is_admin;
+  public string $firstname;
   public bool $is_active;
+  public bool $adress_id;
+
+
+  public ?Adress $adress;
+ 
 }

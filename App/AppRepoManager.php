@@ -2,17 +2,18 @@
 
 namespace App;
 
-use App\Model\Order;
+use App\Model\Equipement;
+use App\Model\Logement;
+use App\Repository\TypeRepository;
 use App\Repository\UserRepository;
-use App\Repository\OrderRepository;
-use App\Repository\IngredientRepository;
-use App\Repository\OrderRowRepository;
-use App\Repository\PizzaIngredientRepository;
-use App\Repository\PizzaRepository;
-use App\Repository\PriceRepository;
-use App\Repository\SizeRepository;
-use App\Repository\UnitRepository;
+use App\Repository\MediaRepository;
+use App\Repository\AdressRepository;
+use App\Repository\FavorisRepository;
+use App\Repository\LogementRepository;
+use App\Repository\EquipementRepository;
+use App\Repository\ReservationRepository;
 use Core\Repository\RepositoryManagerTrait;
+use App\Repository\LogementEquipementRepository;
 
 class AppRepoManager
 {
@@ -20,75 +21,85 @@ class AppRepoManager
   use RepositoryManagerTrait;
 
   //on déclare une propriété privée qui va contenir une instance du repository
-  private IngredientRepository $ingredientRepository;
-  private OrderRepository $orderRepository;
-  private OrderRowRepository $orderRowRepository;
-  private PizzaIngredientRepository $pizzaIngredientRepository;
-  private PizzaRepository $pizzaRepository;
-  private PriceRepository $priceRepository;
-  private SizeRepository $sizeRepository;
-  private UnitRepository $unitRepository;
-  private UserRepository $userRepository;
+// exemple: private Repository $Repository;
 
-  //on crée le getter
+private AdressRepository $adressRepository;
+private EquipementRepository $equipementRepository;
+private FavorisRepository $favorisRepository;
+private LogementRepository $logementRepository;
+private LogementEquipementRepository $logementEquipementRepository;
+private MediaRepository $mediaRepository;
+private ReservationRepository $reservationRepository;
+private TypeRepository $typeRepository;
+private UserRepository $userRepository;
+
+  //on crée ensuite les getter pour accéder à la propriété privée
+  public function getAdressRepository(): AdressRepository
+  {
+    return $this->adressRepository;
+  }
+
+  public function getEquipementRepository(): EquipementRepository
+  {
+    return $this->equipementRepository;
+  }
+
+  public function getFavorisRepository(): FavorisRepository
+  {
+    return $this->favorisRepository;
+  }
+
+  public function getLogementRepository(): LogementRepository
+  {
+    return $this->logementRepository;
+  }
+
+  public function getLogementEquipementRepository(): LogementEquipementRepository
+  {
+    return $this->logementEquipementRepository;
+  }
+
+  public function getMediaRepository(): MediaRepository
+  {
+    return $this->mediaRepository;
+  }
+
+  public function getReservationRepository(): ReservationRepository
+  {
+    return $this->reservationRepository;
+  }
+
+  public function getTypeRepository(): TypeRepository
+  {
+    return $this->typeRepository;
+  }
+
   public function getUserRepository(): UserRepository
   {
     return $this->userRepository;
   }
+    
+  //exemple: public function getRepository(): Repository
+  //{
+  //  return $this->Repository;
+  //}
 
-  public function getIngredientRepository(): IngredientRepository
-  {
-    return $this->ingredientRepository;
-  }
-
-  public function getOrderRepository(): OrderRepository
-  {
-    return $this->orderRepository;
-  }
-
-  public function getOrderRowRepository(): OrderRowRepository
-  {
-    return $this->orderRowRepository;
-  }
-
-  public function getPizzaIngredientRepository(): PizzaIngredientRepository
-  {
-    return $this->pizzaIngredientRepository;
-  }
-
-  public function getPizzaRepository(): PizzaRepository
-  {
-    return $this->pizzaRepository;
-  }
-
-  public function getPriceRepository(): PriceRepository
-  {
-    return $this->priceRepository;
-  }
-
-  public function getSizeRepository(): SizeRepository
-  {
-    return $this->sizeRepository;
-  }
-
-  public function getUnitRepository(): UnitRepository
-  {
-    return $this->unitRepository;
-  }
-
-  //on declare un construct qui va instancier les repositories
+  //enfin, on declare un construct qui va instancier les repositories
   protected function __construct()
   {
     $config = App::getApp();
     //on instancie le repository
+
+    $this->adressRepository = new AdressRepository($config);
+    $this->equipementRepository = new EquipementRepository($config);
+    $this->favorisRepository = new FavorisRepository($config);
+    $this->logementRepository = new LogementRepository($config);
+    $this->logementEquipementRepository = new LogementEquipementRepository($config);
+    $this->mediaRepository = new MediaRepository($config);
+    $this->reservationRepository = new ReservationRepository($config);
+    $this->typeRepository = new TypeRepository($config);
     $this->userRepository = new UserRepository($config);
-    $this->ingredientRepository = new IngredientRepository($config);
-    $this->orderRepository = new OrderRepository($config);
-    $this->orderRowRepository = new OrderRowRepository($config);
-    $this->pizzaIngredientRepository = new PizzaIngredientRepository($config);
-    $this->pizzaRepository = new PizzaRepository($config);
-    $this->priceRepository = new PriceRepository($config);
-    $this->sizeRepository = new SizeRepository($config);
-    $this->unitRepository = new UnitRepository($config);
+    
+    //exemple: $this->Repository = new Repository($config);
   }
 }

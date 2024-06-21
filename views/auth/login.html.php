@@ -1,25 +1,25 @@
-<?php if($auth::isAuth()) $auth::redirect('/') ?>
+<?php if ($auth::isAuth()) $auth::redirect('/') ?>
 <main class="container-form">
-  <h1>Je me connecte</h1>
-  <!-- affichage des erreurs s'il y en a -->
-  <?php if ($form_result && $form_result->hasErrors()) : ?>
-    <div class="alert alert-danger" role="alert">
-      <?= $form_result->getErrors()[0]->getMessage() ?>
-    </div>
-  <?php endif ?>
 
-  <form class="auth-form" action="/login" method="POST">
+  <!-- affichage des erreurs s'il y en a -->
+  <?php include(PATH_ROOT . 'views/_templates/_message.html.php') ?>
+
+
+
+<div class="login-box">
+  <form class="auth-form  mx-auto" action="/login" method="POST">
     <div class="box-auth-input">
-      <label class="detail-description">Adresse Email</label>
+      <label class="detail-description mb-3 h4">Adresse Email</label>
       <input type="email" class="form-control" name="email">
     </div>
-    <div class="box-auth-input">
-      <label class="detail-description">Mot de passe</label>
+    <div class="box-auth-input mt-3 ">
+      <label class="detail-description mb-3 h4">Mot de passe</label>
       <input type="password" class="form-control" name="password">
     </div>
     
    
-    <button type="submit" class="call-action">Je me connecte</button>
+    <button type="submit" class="call-action  button  btn-lg mt-4 h5 ">Je me connecte</button>
   </form>
-  <p class="header-description">Je n'ai pas de compte, <a class="auth-link" href="/inscription">je m'inscrit</a></p>
+  <p class="header-description mt-5 ">Je n'ai pas de compte, <a class="auth-link" href="/inscription"><span class="spanColor">je m'inscrit</span></a></p>
+  </div>
 </main>

@@ -12,15 +12,10 @@ class UserRepository extends Repository
     return 'user';
   }
 
-  /**
-   * méthode pour ajouter un utilisateur
-   * 
-   */
   public function addUser(array $data): ?User
   {
     //on crée un tableau pour que le client ne soit pas admin et soit actif
     $data_more = [
-      'is_admin' => 0,
       'is_active' => 1
     ];
     //on fusionne les 2 tableaux
@@ -28,8 +23,8 @@ class UserRepository extends Repository
 
     //on crée la requete SQL
     $query = sprintf(
-      'INSERT INTO %s (`email`, `password`, `firstname`, `lastname`, `phone`, `is_admin`, `is_active`) 
-      VALUES (:email, :password, :firstname, :lastname, :phone,  :is_admin, :is_active)',
+      'INSERT INTO %s (`email`, `password`, `firstname`, `lastname`, `is_active`) 
+      VALUES (:email, :password, :firstname, :lastname, :is_active)',
       $this->getTableName()
     );
     //on prépare la requete
@@ -65,4 +60,22 @@ class UserRepository extends Repository
     }
     return $user ?? null;
   }
+
+
+  public function ReservationByUserId(int $id): array
+  {
+    //on crée notre requete SQL
+    $q = sprintf('SELECT * FROM %s WHERE id = :id', $this->getTableName());
+    //on prépare la requete
+    $stmt = $this->pdo->prepare($q);
+    //on verrifie que la requete est bien bien préparée
+    if (!$stmt) return [];
+    //si tout est bon, on bind les valeurs
+    $stmt->execute(['id' => $id]);
+    $result = $stmt->fetchAll();
+    return $result;
+  }
+
+
+
 }
